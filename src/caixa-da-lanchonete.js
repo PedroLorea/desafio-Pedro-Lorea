@@ -14,9 +14,13 @@ class CaixaDaLanchonete {
     calcularValorDaCompra(metodoDePagamento, itens) {
         let total = 0
 
-        this.carrinhoTemItens(itens)
-        this.checkItensExtra(itens)
+        const temItens = this.carrinhoTemItens(itens)
+        if(!temItens) return 'Não há itens no carrinho de compra!'
+
+        const checkItemExtra = this.checkItensExtra(itens)
+        if(!checkItemExtra) return 'Item extra não pode ser pedido sem o principal'
         
+
         for(const itemCarrinho of itens){
             const [nome, quantidade] = itemCarrinho.split(',')
             if(quantidade === "0") {
@@ -31,7 +35,7 @@ class CaixaDaLanchonete {
                 total += itemCadastrado.valor * quantidadeInt
             } 
             else {
-                return 'Item inválido'
+                return 'Item inválido!'
             }
         }
 
@@ -61,8 +65,9 @@ class CaixaDaLanchonete {
 
     carrinhoTemItens(itens){
         if(itens == null || itens.length === 0){
-            return 'Não há itens no carrinho de compra'
+            return false
         }
+        return true
     }
 
     checkItensExtra(itens){
@@ -74,17 +79,18 @@ class CaixaDaLanchonete {
                 const temSanduicheLista = this.temSanduiche(itens)
 
                 if(temSanduicheLista === false){
-                    return 'Item extra não pode ser pedido sem o principal'
+                    return false
                 }
             }
             if(nome === 'chantily'){
                 const temCafe = this.temCafe(itens)
 
                 if(!temCafe) {
-                    return 'Item extra não pode ser pedido sem o principal'
+                    return false
                 }
             }
         }
+        return true
     }
 
     temSanduiche(itens){
@@ -126,6 +132,3 @@ class CaixaDaLanchonete {
 
 
 export { CaixaDaLanchonete };
-
-// const instancia = new CaixaDaLanchonete()
-// instancia.calcularValorDaCompra('credito', ['queijo,1','chantily,1'])
