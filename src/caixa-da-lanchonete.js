@@ -77,7 +77,7 @@ class CaixaDaLanchonete {
             if(nome === 'queijo'){
                 const temSanduicheLista = this.temSanduiche(itens)
 
-                if(temSanduicheLista === false){
+                if(!temSanduicheLista){
                     return false
                 }
             }
@@ -111,8 +111,8 @@ class CaixaDaLanchonete {
     }
 
     checkQuantidade(itens){
-        for(const itemCarrinho of itens){
-            const [ , quantidade] = itemCarrinho.split(',')
+        for(const item of itens){
+            const [ , quantidade] = item.split(',')
             if(quantidade === "0") {
                 return false
             }
