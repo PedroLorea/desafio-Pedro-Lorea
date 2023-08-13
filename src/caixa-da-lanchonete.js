@@ -14,21 +14,20 @@ class CaixaDaLanchonete {
     calcularValorDaCompra(metodoDePagamento, itens) {
         let total = 0
 
-        const temItens = this.carrinhoTemItens(itens)
-        if(!temItens) return 'Não há itens no carrinho de compra!'
+        const temItensCarrinho = this.carrinhoTemItens(itens)
+        if(!temItensCarrinho) return 'Não há itens no carrinho de compra!'
 
-        const checkItemExtra = this.checkItensExtra(itens)
-        if(!checkItemExtra) return 'Item extra não pode ser pedido sem o principal'
+        const temItemExtraSemPrincipal = this.checkItensExtra(itens)
+        if(!temItemExtraSemPrincipal) return 'Item extra não pode ser pedido sem o principal'
         
+        const temQuantidadeZero = this.checkQuantidade(itens)
+        if(!temQuantidadeZero) return 'Quantidade inválida!'
+
 
         for(const itemCarrinho of itens){
             const [nome, quantidade] = itemCarrinho.split(',')
-            if(quantidade === "0") {
-                return 'Quantidade inválida!'
-            }
-            
 
-            const itemCadastrado = this.procuraItemCadastrado(nome)
+            const itemCadastrado = this.itemEstaCadastrado(nome)
             
             if(itemCadastrado){
                 const quantidadeInt = parseInt(quantidade)
@@ -42,23 +41,23 @@ class CaixaDaLanchonete {
 
         switch(metodoDePagamento){
             case "debito": 
-                total = this.pagarComDebito(total);
+                total = this.pagarComDebito(total)
                 break;
 
             case "credito": 
-                total = this.pagarComCredito(total);
+                total = this.pagarComCredito(total)
                 break;
 
             case "dinheiro": 
-                total = this.pagarComDinheiro(total);
+                total = this.pagarComDinheiro(total)
                 break;
 
             default: 
                 return "Forma de pagamento inválida!"
         }
 
-        const totalFormatado = 'R$ ' + total.toFixed(2).replace(".", ",")
-        console.log(totalFormatado)
+
+        const totalFormatado = this.formatarTotal(total)
         return totalFormatado
     }
 
@@ -111,8 +110,18 @@ class CaixaDaLanchonete {
         return false
     }
 
+    checkQuantidade(itens){
+        for(const itemCarrinho of itens){
+            const [ , quantidade] = itemCarrinho.split(',')
+            if(quantidade === "0") {
+                return false
+            }
+        }
+        return true
+    }
 
-    procuraItemCadastrado(nome){
+
+    itemEstaCadastrado(nome){
         return CaixaDaLanchonete.listaDeItens.find(cadastrado => cadastrado.nome === nome)
     }
 
@@ -127,6 +136,10 @@ class CaixaDaLanchonete {
 
     pagarComDinheiro(total){ //5% de desconto
         return 95/100 * total
+    }
+
+    formatarTotal(total){
+        return 'R$ ' + total.toFixed(2).replace(".", ",")
     }
 }
 
